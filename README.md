@@ -46,6 +46,8 @@ com.files.FileIterator
 - Use of key/value database instead of hashmap.
 - Would use words occurences for search results ranking.
 - Use stemming (Porter Stemmer for English, for example) to remove common endings from words (-s, -ing, -er, -ed, etc.).
+- Apply a ranking algorithm(tf-idf, pagerank, etc) for the search query against each of the returned documents, and then sort by rank.
+- A single word could appear in too many documents, and so maintaining a single key-value pair for that word is not feasible, would consider partitioning of index based on document category or a different meta data.
 ##### How to run
 ```
 git clone https://github.com/gennadyg/search_poc
