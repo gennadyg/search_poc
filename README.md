@@ -1,4 +1,4 @@
-#### Words Counter
+#### Words Counter POC
 Inverted Index & Map Reduce
 Given a potentially very large set of documents. Some of the documents are also very large and cannot fit 
 into the memory of a single machine. Design and implement a search engine. 
@@ -6,8 +6,16 @@ Example 1: Suppose you have a local copy of Wikipedia which comes in the form of
 the ZIP archive corresponds to the Wikipedia article and file names correspond to article names. Given a search query
 ‘a computer science’ , the designed engine will return all documents containing both the words: ‘computer’ and ‘science’.
 
+#### Assumptions
+- Elastic search can not be used, because it can do the same and even better
+- POC contains only single threaded application that read files direrctory and 
+
 ![img.png](img.png)
 
+ Suggested solution: 
+- Preprocessing service to unzip archive
+- Read and map & reduce files using Spark 
+- Save inverted index in Redis or other key/value store
 ##### Alghorithm:
 Basically for each file created callable task, that submitted to executor pool. Each task read line by line text file,
 parse to words( map function ) and updates words counters( reduce function ) in shared concurrent map.   
@@ -30,12 +38,11 @@ com.wordscounter.SingleFileProcessor
 com.wordscounter.WordsCounter
 com.files.FileIterator
 ```
-gradlew wordsCounterSmall // to run three small files with data from assignment
+gradlew wordsCounterSmall // to run three small files and print inverted index
 
-gradlew wordsCounterLarge // to run three bigger files, in input directory
+gradlew wordsCounterLarge // to run three bigger files and print inverted index
 ```
-Tests:
+Tests: Search tests are included
 com.ascii.WordsCounterTest
-com.ascii.SingleFileProcessorTest
 ```
 gradlew tests 

@@ -49,6 +49,7 @@ public class WordsCounter {
   public Map<String, WordMetaData> wordCounts;
   private TimeUnit unit;
   private ExecutorService executor;
+  private int concurrency = 0;
   /**
    *
    * @param maxTimeOut - maximum timeout to wait for single file processor to finish
@@ -59,9 +60,9 @@ public class WordsCounter {
     this.unit = unit;
     // Want to create concurrency that equals to number of com.files or number of cores on machine
     // each core could handle multiple threads, usually 2
-    int concurrency = Math.min( Constants.maxNumOfFilesInBatch, Runtime.getRuntime().availableProcessors()*2 );
+    concurrency = Math.min( Constants.maxNumOfFilesInBatch, Runtime.getRuntime().availableProcessors()*2 );
     logger.info("Concurrency used - " + concurrency );
-    executor = Executors.newFixedThreadPool( concurrency );
+
     wordCounts = new ConcurrentHashMap<>( initialCapacity, loadFactor, concurrency );
   }
 
@@ -107,6 +108,7 @@ public class WordsCounter {
     Set<Callable<TaskResult>> tasks = createTasks( fileNames );
     try {
       // Submit all tasks to executor
+      executor = Executors.newFixedThreadPool( concurrency );
       List<Future<TaskResult>> futures = executor.invokeAll( tasks, maxTimeout, unit );
       // Iterate over all tasks and waiting for maximum timeout
       for( Future<TaskResult> future : futures){
@@ -217,6 +219,11 @@ public class WordsCounter {
               logger.info( "Finished to process chunk id: " + numOfReadFiles / Constants.maxNumOfFilesInBatch );
               filesToProcess.clear();
             }
+          }
+        }
+        if(!filesToProcess.isEmpty()){
+          if( wordsCounter.load( filesToProcess.toArray(new String[0]) )){
+            logger.info( "Finished to process leftovers");
           }
         }
 
