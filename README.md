@@ -8,7 +8,8 @@ the ZIP archive corresponds to the Wikipedia article and file names correspond t
 
 #### Assumptions
 - Elastic search can not be used, because it can do the same and even better
-- POC contains only single threaded application that read files direrctory and 
+- POC contains only single threaded application that read files from local directory and building inverted index in-memory.
+- Stop words are hard coded as constant set.
 
 ![img.png](img.png)
 
@@ -37,7 +38,14 @@ LongAdder as counter.
 com.wordscounter.SingleFileProcessor
 com.wordscounter.WordsCounter
 com.files.FileIterator
+
+###### Things to add to be production ready
+- Stop words should be configurable.
+- Use of key/value database instead of hashmap.
+##### How to run
 ```
+git clone https://github.com/gennadyg/search_poc
+
 gradlew wordsCounterSmall // to run three small files and print inverted index
 
 gradlew wordsCounterLarge // to run three bigger files and print inverted index
