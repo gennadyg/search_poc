@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+task(wordsCounterSmall, dependsOn: 'classes', type: JavaExec) {
+    main = 'com.wordcounter.WordsCounter'
+    classpath = sourceSets.main.runtimeClasspath
+    args '--input', 'words/inputSample1.txt','--timeout', 60
+}
+
+task(wordsCounterLarge, dependsOn: 'classes', type: JavaExec) {
+    main = 'com.wordcounter.WordsCounter'
+    classpath = sourceSets.main.runtimeClasspath
+    args '--input', 'words/inputLarge1.txt,words/inputLarge2.txt,words/inputLarge3.txt','--timeout', 60
+}
+
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+
+// https://mvnrepository.com/artifact/commons-cli/commons-cli
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    implementation 'org.projectlombok:lombok:1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+
+    implementation group: 'junit', name: 'junit', version: '4.13'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
