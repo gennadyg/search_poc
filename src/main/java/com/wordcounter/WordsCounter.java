@@ -57,14 +57,9 @@ public class WordsCounter {
 
     this.maxTimeout = maxTimeOut;
     this.unit = unit;
-  }
-  /**
-   *   Create words count map that will shared between multiple tasks
-   *
-   * @param filesLength - number of files to process
-   */
-  private void init( int filesLength ){
-    int concurrency = Math.min( filesLength, Runtime.getRuntime().availableProcessors()*2 );
+    // Want to create concurrency that equals to number of com.files or number of cores on machine
+    // each core could handle multiple threads, usually 2
+    int concurrency = Math.min( Constants.maxNumOfFilesInBatch, Runtime.getRuntime().availableProcessors()*2 );
     logger.info("Concurrency used - " + concurrency );
     executor = Executors.newFixedThreadPool( concurrency );
     wordCounts = new ConcurrentHashMap<>( initialCapacity, loadFactor, concurrency );
@@ -93,7 +88,7 @@ public class WordsCounter {
    */
   private void validateInput( String ... fileNames ) throws FileNotFoundException {
     if( fileNames == null || fileNames.length == 0 ){
-      throw new FileNotFoundException("Please provide comma separated file names, less than " + Constants.maxNumOfFiles );
+      throw new FileNotFoundException("Please provide comma separated file names, less than " + Constants.maxNumOfFilesInBatch );
     }
     for( String fileName : fileNames ){
       if( !FileUtils.checkThatFileExists( fileName )){
@@ -109,9 +104,6 @@ public class WordsCounter {
   public boolean load( String ... fileNames ) throws FileNotFoundException, ExecutionException {
     boolean res = true;
     validateInput( fileNames );
-    // Want to create concurrency that equals to number of com.files or number of cores on machine
-    // each core could handle multiple threads, usually 2
-    init( fileNames.length );
     Set<Callable<TaskResult>> tasks = createTasks( fileNames );
     try {
       // Submit all tasks to executor
@@ -166,7 +158,6 @@ public class WordsCounter {
         .longOpt(Constants.input)
         .build();
     Option timeout = Option.builder()
-        .required()
         .hasArg()
         .longOpt(Constants.timeout)
         .build();
@@ -220,14 +211,15 @@ public class WordsCounter {
         for (Path path : stream) {
           filesToProcess.add(path.toString());
           logger.info( "Found file: " + path.getFileName() );
-          if (++numOfReadFiles % Constants.maxNumOfFiles == 0){
-            logger.info( "Processing chunk id: " + numOfReadFiles / Constants.maxNumOfFiles );
+          if (++numOfReadFiles % Constants.maxNumOfFilesInBatch == 0){
+            logger.info( "Processing chunk id: " + numOfReadFiles / Constants.maxNumOfFilesInBatch );
             if( wordsCounter.load( filesToProcess.toArray(new String[0]) )){
-              logger.info( "Finished to process chunk id: " + numOfReadFiles / Constants.maxNumOfFiles );
+              logger.info( "Finished to process chunk id: " + numOfReadFiles / Constants.maxNumOfFilesInBatch );
+              filesToProcess.clear();
             }
           }
-          filesToProcess.clear();
         }
+
         wordsCounter.displayStatusSorted();
       }
       logger.info("Word Counting took {} milliseconds", System.currentTimeMillis() - executionStartTime );

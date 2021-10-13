@@ -15,7 +15,7 @@ public class Constants {
     add("a");
     add("and");
   }};
-  public final static int maxNumOfFiles = 2;
+  public final static int maxNumOfFilesInBatch = 2;
 
   public final static String input = "input";
   public final static String timeout = "timeout";

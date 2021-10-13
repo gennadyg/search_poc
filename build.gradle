@@ -1,6 +1,8 @@
 plugins {
     id 'java'
+    id 'com.adarshr.test-logger' version '3.0.0'
 }
+
 
 group 'org.example'
 version '1.0-SNAPSHOT'
@@ -11,13 +13,13 @@ repositories {
 task(wordsCounterSmall, dependsOn: 'classes', type: JavaExec) {
     main = 'com.wordcounter.WordsCounter'
     classpath = sourceSets.main.runtimeClasspath
-    args '--input', 'words/inputSample1.txt','--timeout', 60
+    args '--input', 'words_small/','--timeout', 10000
 }
 
 task(wordsCounterLarge, dependsOn: 'classes', type: JavaExec) {
     main = 'com.wordcounter.WordsCounter'
     classpath = sourceSets.main.runtimeClasspath
-    args '--input', 'words/inputLarge1.txt,words/inputLarge2.txt,words/inputLarge3.txt','--timeout', 60
+    args '--input', 'words/','--timeout', 10000
 }
 
 
