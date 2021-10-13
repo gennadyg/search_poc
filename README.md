@@ -14,15 +14,17 @@ the ZIP archive corresponds to the Wikipedia article and file names correspond t
 ![img.png](img.png)
 
 #### Suggested solution: 
-- Preprocessing service to unzip archive
-- Read and map & reduce files using Spark 
-- Save inverted index in Redis or other key/value store
+- Preprocessing service to unzip archive and would research option to combine small files into big files without loosing file information, to avoid spark driver possible performance penalty in case of huge amount of a small files.
+- Read and map & reduce files using Spark.
+- Save inverted index in Redis or other key/value store.
+- API service(Akka/dropwizard) to run search complex queries against Redis with saving results to Redis as well.
+
 ##### Alghorithm:
 Basically for each file created callable task, that submitted to executor pool. Each task read line by line text file,
 parse to words( map function ) and updates words counters( reduce function ) in shared concurrent map.   
 Main is located in WordsCounter.
 Concurrency level, used by to define executor pool size and concurency level in shared concurent hash map.
-To assure that no race condition will occur, for updates in in concurrent map is used computeIfAbsent method. Also used
+To assure that no race condition will occur, for updates in concurrent map is used computeIfAbsent method. Also used
 LongAdder as counter.
 ##### Indexing:
 - Going to ignore casing, grammatical tenses, "stop words" (most common words in a language, e.g., the, is, at, which, on, etc.).
@@ -42,6 +44,8 @@ com.files.FileIterator
 ###### Things to add to be production ready
 - Stop words should be configurable.
 - Use of key/value database instead of hashmap.
+- Would use words occurences for search results ranking.
+- Use stemming (Porter Stemmer for English, for example) to remove common endings from words (-s, -ing, -er, -ed, etc.).
 ##### How to run
 ```
 git clone https://github.com/gennadyg/search_poc
