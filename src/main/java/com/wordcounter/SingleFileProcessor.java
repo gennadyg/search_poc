@@ -49,8 +49,7 @@ public class SingleFileProcessor implements Callable<TaskResult> {
    */
   private void reduce( String[] words, String fileId ){
     Arrays.stream(words)
-         .filter( word -> !word.isEmpty())
-         .filter( word -> !Constants.stopWords.contains(word.toLowerCase()))
+         .filter( word -> !word.isEmpty() && !Constants.stopWords.contains(word.toLowerCase()))
          .forEach( currentWord ->  {
            wordCount.computeIfAbsent( currentWord.toLowerCase(), k -> new WordMetaData(fileId)).getFileIdSet().add(fileId);
            wordCount.get(currentWord.toLowerCase()).getOccurencesNo().increment();

@@ -13,7 +13,7 @@ the ZIP archive corresponds to the Wikipedia article and file names correspond t
 
 ![img.png](img.png)
 
- Suggested solution: 
+#### Suggested solution: 
 - Preprocessing service to unzip archive
 - Read and map & reduce files using Spark 
 - Save inverted index in Redis or other key/value store
