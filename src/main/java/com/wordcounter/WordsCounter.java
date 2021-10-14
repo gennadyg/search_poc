@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  *  *
  *
- * Receive few text com.files and will count (and later print) all the words that exist in these com.files (together) and the
+ * Receive few files and will build inverted index (and later print) of all the words that exist in these files (together) and the
  * number of times each one of them appears.
  * <br>
  * In order to get {@link WordsCounter} object use its builder as following:
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * <br>
  * Parameters example:
  * {@code
- * --input "input/input_Q1b.txt" --output "input/output_Q2b.txt"
+ * --input "input/" --timeout 1000
  * }
  *
  *
